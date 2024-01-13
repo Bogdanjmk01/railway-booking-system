@@ -6,8 +6,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 
-import java.sql.Timestamp;
-
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
 
 @Data
@@ -20,5 +18,5 @@ public class Route {
     private Long departureStationId;
     private Long arrivalStationId;
     private int distance;
-    private Timestamp arrivalTime;
+    private String arrivalTime;
 }

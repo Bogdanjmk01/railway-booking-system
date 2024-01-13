@@ -14,7 +14,7 @@ public class RouteRowMapper implements RowMapper<Route> {
                 .departureStationId(rs.getLong("departure_station_id"))
                 .arrivalStationId(rs.getLong("arrival_station_id"))
                 .distance(rs.getInt("distance"))
-                .arrivalTime(rs.getTimestamp("arrival_time"))
+                .arrivalTime(rs.getString("arrival_time"))
                 .build();
     }
 }

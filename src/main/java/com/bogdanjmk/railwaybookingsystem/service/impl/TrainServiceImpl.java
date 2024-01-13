@@ -1,9 +1,6 @@
 package com.bogdanjmk.railwaybookingsystem.service.impl;
 
-import com.bogdanjmk.railwaybookingsystem.model.Route;
-import com.bogdanjmk.railwaybookingsystem.model.Seat;
-import com.bogdanjmk.railwaybookingsystem.model.Station;
-import com.bogdanjmk.railwaybookingsystem.model.Train;
+import com.bogdanjmk.railwaybookingsystem.model.*;
 import com.bogdanjmk.railwaybookingsystem.repository.TrainRepository;
 import com.bogdanjmk.railwaybookingsystem.service.TrainService;
 import lombok.RequiredArgsConstructor;
@@ -29,13 +26,13 @@ public class TrainServiceImpl implements TrainService {
     }
 
     @Override
-    public void updateTrain(Train train) {
-        trainRepository.updateTrain(train.getId(), train.getName(), train.getType());
+    public void updateTrain(Train train, Long trainId) {
+        trainRepository.updateTrain(trainId, train.getName(), train.getType());
     }
 
     @Override
-    public void updateSeat(Seat seat) {
-        trainRepository.updateSeatForTrain(seat.getId(), seat.getSeatNumber(), seat.getCarNumber(), seat.getClassName());
+    public void updateSeat(Seat seat, Long seatId) {
+        trainRepository.updateSeatForTrain(seatId, seat.getTrainId(), seat.getSeatNumber(), seat.getCarNumber(), seat.getClassName());
     }
 
     @Override
@@ -60,11 +57,67 @@ public class TrainServiceImpl implements TrainService {
 
     @Override
     public void createRoute(Route route) {
+        System.out.println(route);
         trainRepository.createRoute(route.getDepartureStationId(), route.getArrivalStationId(), route.getDistance(), route.getArrivalTime());
     }
 
     @Override
     public List<Route> getRoutes() {
         return trainRepository.getAllRoutes();
+    }
+
+    @Override
+    public List<Schedule> getSchedules() {
+        return trainRepository.getAllSchedules();
+    }
+
+    @Override
+    public void createSchedule(Schedule schedule) {
+        trainRepository.createSchedule(schedule.getTrainId(), schedule.getRouteId(), schedule.getDepartureTime(), schedule.getArrivalTime());
+    }
+
+    @Override
+    public Train getTrainById(Long trainId) {
+        return trainRepository.getTrainById(trainId);
+    }
+
+    @Override
+    public Seat getSeatById(Long seatId) {
+        return trainRepository.getSeatById(seatId);
+    }
+
+    @Override
+    public void deleteTrainById(Long trainId) {
+        trainRepository.deleteTrainById(trainId);
+    }
+
+    @Override
+    public void deleteRouteById(Long routeId) {
+        trainRepository.deleteRouteById(routeId);
+    }
+
+    @Override
+    public void deleteScheduleById(Long scheduleId) {
+        trainRepository.deleteScheduleById(scheduleId);
+    }
+
+    @Override
+    public void deleteStationById(Long stationId) {
+        trainRepository.deleteStationById(stationId);
+    }
+
+    @Override
+    public Station getStationById(Long stationId) {
+        return trainRepository.getStationById(stationId);
+    }
+
+    @Override
+    public Route getRouteById(Long routeId) {
+        return trainRepository.getRouteById(routeId);
+    }
+
+    @Override
+    public void updateRouteById(Long routeId, Route route) {
+        trainRepository.updateRoute(routeId, route.getDepartureStationId(), route.getArrivalStationId(), route.getDistance(), route.getArrivalTime());
     }
 }

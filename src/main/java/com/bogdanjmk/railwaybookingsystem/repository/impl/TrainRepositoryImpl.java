@@ -1,15 +1,9 @@
 package com.bogdanjmk.railwaybookingsystem.repository.impl;
 
 import com.bogdanjmk.railwaybookingsystem.exception.ApiException;
-import com.bogdanjmk.railwaybookingsystem.model.Route;
-import com.bogdanjmk.railwaybookingsystem.model.Seat;
-import com.bogdanjmk.railwaybookingsystem.model.Station;
-import com.bogdanjmk.railwaybookingsystem.model.Train;
+import com.bogdanjmk.railwaybookingsystem.model.*;
 import com.bogdanjmk.railwaybookingsystem.repository.TrainRepository;
-import com.bogdanjmk.railwaybookingsystem.rowmapper.RouteRowMapper;
-import com.bogdanjmk.railwaybookingsystem.rowmapper.SeatRowMapper;
-import com.bogdanjmk.railwaybookingsystem.rowmapper.StationRowMapper;
-import com.bogdanjmk.railwaybookingsystem.rowmapper.TrainRowMapper;
+import com.bogdanjmk.railwaybookingsystem.rowmapper.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -59,9 +53,9 @@ public class TrainRepositoryImpl implements TrainRepository<Train> {
     }
 
     @Override
-    public void updateSeatForTrain(Long id, String seatNumber, int carNumber, String className) {
+    public void updateSeatForTrain(Long id, Long trainId, String seatNumber, int carNumber, String className) {
         try {
-            jdbc.update(UPDATE_SEAT_TRAIN_QUERY, Map.of("id", id, "seatNumber", seatNumber, "carNumber", carNumber, "className", className));
+            jdbc.update(UPDATE_SEAT_TRAIN_QUERY, Map.of("seatNumber", seatNumber, "trainId", trainId, "carNumber", carNumber, "className", className, "id", id));
         } catch (Exception exception) {
             log.error(exception.getMessage());
             log.info(exception.getCause().getMessage());
@@ -114,10 +108,13 @@ public class TrainRepositoryImpl implements TrainRepository<Train> {
     }
 
     @Override
-    public void createRoute(Long departureStationId, Long arrivalStationId, int distance, Timestamp arrivalTime) {
+    public void createRoute(Long departureStationId, Long arrivalStationId, int distance, String arrivalTime) {
         try {
             jdbc.update(INSERT_ROUTE_QUERY, Map.of("departureStationId", departureStationId, "arrivalStationId", arrivalStationId, "distance", distance, "arrivalTime", arrivalTime));
         } catch (Exception exception) {
+            log.info(exception.getMessage());
+            log.info(exception.getLocalizedMessage());
+            log.info(exception.getCause().toString());
             throw new ApiException("An error has occurred");
         }
     }
@@ -130,6 +127,119 @@ public class TrainRepositoryImpl implements TrainRepository<Train> {
             throw new ApiException("No routes found");
         } catch (Exception exception) {
             throw new ApiException("An error has occurred");
+        }
+    }
+
+    @Override
+    public List<Schedule> getAllSchedules() {
+        try {
+            return jdbc.query(SELECT_ALL_SCHEDULES_QUERY, new ScheduleRowMapper());
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ApiException("Could not find any schedules");
+        } catch (Exception exception) {
+            throw new ApiException("An error has occurred");
+        }
+    }
+
+    @Override
+    public void createSchedule(Long trainId, Long routeId, Timestamp departureTime, Timestamp arrivalTime) {
+        try {
+            jdbc.update(INSERT_SCHEDULE_QUERY, Map.of("trainId", trainId, "routeId", routeId, "departureTime", departureTime, "arrivalTime", arrivalTime));
+        } catch (Exception exception) {
+            throw new ApiException("An error has occurred");
+        }
+    }
+
+    @Override
+    public Train getTrainById(Long trainId) {
+        try {
+            return jdbc.queryForObject(SELECT_TRAIN_BY_ID_QUERY, Map.of("trainId", trainId), new TrainRowMapper());
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ApiException("No train found");
+        } catch (Exception exception) {
+            throw new ApiException("An error has occurred");
+        }
+    }
+
+    @Override
+    public Seat getSeatById(Long seatId) {
+        try {
+            return jdbc.queryForObject(SELECT_SEAT_BY_ID_QUERY, Map.of("seatId", seatId), new SeatRowMapper());
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ApiException("No seat found");
+        } catch (Exception exception) {
+            throw new ApiException("An error has occurred");
+        }
+    }
+
+    @Override
+    public Station getStationById(Long stationId) {
+        try {
+            return jdbc.queryForObject(SELECT_STATION_BY_ID_QUERY, Map.of("stationId", stationId), new StationRowMapper());
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ApiException("No station found");
+        } catch (Exception exception) {
+            throw new ApiException("An error has occurred");
+        }
+    }
+
+    @Override
+    public Route getRouteById(Long routeId) {
+        try {
+            return jdbc.queryForObject(SELECT_ROUTE_BY_ID_QUERY, Map.of("routeId", routeId), new RouteRowMapper());
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ApiException("No route found");
+        } catch (Exception exception) {
+            throw new ApiException("An error has occurred");
+        }
+    }
+
+    @Override
+    public void deleteStationById(Long stationId) {
+        try {
+            jdbc.update(DELETE_STATION_BY_ID, Map.of("stationId", stationId));
+        } catch (Exception exception) {
+            throw new ApiException("An error has occurred");
+        }
+    }
+
+    @Override
+    public void deleteTrainById(Long trainId) {
+        try {
+            jdbc.update(DELETE_TRAIN_BY_ID_QUERY, Map.of("trainId", trainId));
+        } catch (Exception exception) {
+            throw new ApiException("An error occurred");
+        }
+    }
+
+    @Override
+    public void deleteRouteById(Long routeId) {
+        try {
+            jdbc.update(DELETE_ROUTE_BY_ID_QUERY, Map.of("routeId", routeId));
+        } catch (Exception exception) {
+            throw new ApiException("An error occurred");
+        }
+    }
+
+    @Override
+    public void deleteScheduleById(Long scheduleId) {
+        try {
+            jdbc.update(DELETE_SCHEDULE_BY_ID_QUERY, Map.of("scheduleId", scheduleId));
+        } catch (Exception exception) {
+            throw new ApiException("An error occurred");
+        }
+    }
+
+    @Override
+    public void updateRoute(Long id, Long arrivalStationId, Long departureStationId, int distance, String arrivalTime) {
+        try {
+            jdbc.update(UPDATE_ROUTE_TRAIN_QUERY, Map.of("departureStationId", departureStationId, "arrivalStationId", arrivalStationId, "distance", distance, "arrivalTime", arrivalTime, "id", id));
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            log.info(exception.getCause().getMessage());
+            log.error(exception.getLocalizedMessage());
+            log.error(exception.getStackTrace().toString());
+            throw new ApiException("An error has occurred!");
         }
     }
 

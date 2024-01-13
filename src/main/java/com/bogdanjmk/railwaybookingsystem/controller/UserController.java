@@ -51,6 +51,42 @@ public class UserController {
         );
     }
 
+    @GetMapping("/trains/{trainId}")
+    public ResponseEntity<HttpResponse> getTrainById(@AuthenticationPrincipal User user, @PathVariable("trainId") Long trainId) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("train", trainService.getTrainById(trainId), "user", user))
+                        .build()
+        );
+    }
+
+    @GetMapping("/seats/{id}")
+    public ResponseEntity<HttpResponse> getSeatById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("seat", trainService.getSeatById(id), "user", user))
+                        .build()
+        );
+    }
+
+    @GetMapping("/station/{id}")
+    public ResponseEntity<HttpResponse> getStationById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("station", trainService.getStationById(id)))
+                        .build()
+        );
+    }
+
+    @GetMapping("/routes/{id}")
+    public ResponseEntity<HttpResponse> getRouteById(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("route", trainService.getRouteById(id)))
+                        .build()
+        );
+    }
+
     @PostMapping("/create/train")
     public ResponseEntity<HttpResponse> createTrain(@AuthenticationPrincipal User user, @RequestBody Train train) {
         trainService.createTrain(train);
@@ -100,8 +136,8 @@ public class UserController {
     }
 
     @PutMapping("/update/train")
-    public ResponseEntity<HttpResponse> updateTrain(@AuthenticationPrincipal User user, @RequestBody Train train) {
-        trainService.updateTrain(train);
+    public ResponseEntity<HttpResponse> updateTrain(@AuthenticationPrincipal User user, @RequestBody Train train, @RequestParam("id") Long trainId) {
+        trainService.updateTrain(train, trainId);
 
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
@@ -112,13 +148,61 @@ public class UserController {
     }
 
     @PutMapping("/update/seat")
-    public ResponseEntity<HttpResponse> updateSeat(@AuthenticationPrincipal User user, @RequestBody Seat seat) {
-        trainService.updateSeat(seat);
+    public ResponseEntity<HttpResponse> updateSeat(@AuthenticationPrincipal User user, @RequestBody Seat seat, @RequestParam("id") Long seatId) {
+        trainService.updateSeat(seat, seatId);
 
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
                         .data(Map.of("user", user))
                         .message("Seat updated successfully!")
+                        .build()
+        );
+    }
+
+    @PutMapping("/update/route")
+    public ResponseEntity<HttpResponse> updateRoute(@AuthenticationPrincipal User user, @RequestBody Route route, @RequestParam("id") Long routeId) {
+        trainService.updateRouteById(routeId, route);
+
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("user", user))
+                        .message("Route updated successfully!")
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/delete/train/{trainId}")
+    public ResponseEntity<HttpResponse> deleteTrainById(@AuthenticationPrincipal User user, @PathVariable("trainId") Long trainId) {
+        trainService.deleteTrainById(trainId);
+
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("user", user))
+                        .message("Train deleted successfully!")
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/delete/station/{stationId}")
+    public ResponseEntity<HttpResponse> deleteStationById(@AuthenticationPrincipal User user, @PathVariable("stationId") Long stationId) {
+        trainService.deleteStationById(stationId);
+
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("user", user))
+                        .message("Station deleted successfully")
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/delete/route/{routeId}")
+    public ResponseEntity<HttpResponse> deleteRouteById(@AuthenticationPrincipal User user, @PathVariable("routeId") Long routeId) {
+        trainService.deleteRouteById(routeId);
+
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("user", user))
+                        .message("Route deleted successfully")
                         .build()
         );
     }

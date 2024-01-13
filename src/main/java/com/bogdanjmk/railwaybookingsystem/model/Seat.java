@@ -15,8 +15,8 @@ import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_DEFAULT;
 @JsonInclude(NON_DEFAULT)
 public class Seat {
     private Long id;
-    private Long trainId;
     private String seatNumber;
+    private Long trainId;
     private int carNumber;
     private String className;
 }

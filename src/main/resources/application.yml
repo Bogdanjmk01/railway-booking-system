@@ -13,3 +13,6 @@ spring:
 jwt:
   secret: ${JWT_SECRET}
   access_token_expiration_time: ${ACCESS_TOKEN_EXPIRATION_TIME}
+
+frontend:
+  url: ${FRONTEND_URL}

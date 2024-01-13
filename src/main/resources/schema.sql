@@ -83,7 +83,7 @@ CREATE TABLE routes (
     departure_station_id BIGSERIAL NOT NULL,
     arrival_station_id BIGSERIAL NOT NULL,
     distance DECIMAL(10, 2) NOT NULL,
-    arrival_time TIMESTAMP NOT NULL,
+    arrival_time VARCHAR(75) NOT NULL,
     FOREIGN KEY (departure_station_id) REFERENCES stations (id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (arrival_station_id) REFERENCES stations (id) ON DELETE CASCADE ON UPDATE CASCADE
 );
