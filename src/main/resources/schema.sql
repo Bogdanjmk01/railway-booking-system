@@ -94,8 +94,8 @@ CREATE TABLE schedules (
     id BIGSERIAL PRIMARY KEY CHECK (id > 0),
     train_id BIGSERIAL NOT NULL,
     route_id BIGSERIAL NOT NULL,
-    departure_time TIMESTAMP NOT NULL,
-    arrival_time TIMESTAMP NOT NULL,
+    departure_time VARCHAR(70) NOT NULL,
+    arrival_time VARCHAR(70) NOT NULL,
     FOREIGN KEY (train_id) REFERENCES trains (id) ON DELETE CASCADE ON UPDATE CASCADE,
     FOREIGN KEY (route_id) REFERENCES routes (id) ON DELETE CASCADE ON UPDATE CASCADE
 );

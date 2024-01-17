@@ -17,7 +17,7 @@ public interface TrainRepository<T extends Train> {
     void createRoute(Long departureStationId, Long arrivalStationId, int distance, String arrivalTime);
     List<Route> getAllRoutes();
     List<Schedule> getAllSchedules();
-    void createSchedule(Long trainId, Long routeId, Timestamp departureTime, Timestamp arrivalTime);
+    void createSchedule(Long trainId, Long routeId, String departureTime, String arrivalTime);
     Train getTrainById(Long trainId);
     Seat getSeatById(Long seatId);
     Station getStationById(Long stationId);
@@ -27,4 +27,6 @@ public interface TrainRepository<T extends Train> {
     void deleteRouteById(Long routeId);
     void deleteScheduleById(Long scheduleId);
     void updateRoute(Long id, Long arrivalStationId, Long departureStationId, int distance, String arrivalTime);
+    Schedule getScheduleById(Long scheduleId);
+    void updateSchedule(Long scheduleId, Long trainId, Long routeId, String departureTime, String arrivalTime);
 }

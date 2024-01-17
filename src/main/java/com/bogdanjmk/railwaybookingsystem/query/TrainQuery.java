@@ -22,4 +22,6 @@ public class TrainQuery {
     public static final String SELECT_ROUTE_BY_ID_QUERY = "SELECT * FROM routes WHERE id = :routeId";
     public static final String DELETE_STATION_BY_ID = "DELETE FROM stations WHERE id = :stationId";
     public static final String UPDATE_ROUTE_TRAIN_QUERY = "UPDATE routes SET departure_station_id = :departureStationId, arrival_station_id = :arrivalStationId, distance = :distance, arrival_time = :arrivalTime WHERE id = :id";
+    public static final String SELECT_SCHEDULE_BY_ID_QUERY = "SELECT * FROM schedules WHERE id = :scheduleId";
+    public static final String UPDATE_SCHEDULE_QUERY = "UPDATE schedules SET train_id = :trainId, route_id = :routeId, departure_time = :departureTime, arrival_time = :arrivalTime WHERE id = :scheduleId";
 }

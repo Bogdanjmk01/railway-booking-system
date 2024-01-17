@@ -26,4 +26,6 @@ public interface TrainService {
     Station getStationById(Long stationId);
     Route getRouteById(Long routeId);
     void updateRouteById(Long routeId, Route route);
+    Schedule getScheduleById(Long scheduleId);
+    void updateScheduleById(Long scheduleId, Schedule schedule);
 }

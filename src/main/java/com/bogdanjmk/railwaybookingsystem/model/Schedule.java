@@ -19,6 +19,6 @@ public class Schedule {
     private Long id;
     private Long trainId;
     private Long routeId;
-    private Timestamp departureTime;
-    private Timestamp arrivalTime;
+    private String departureTime;
+    private String arrivalTime;
 }

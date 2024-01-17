@@ -142,7 +142,7 @@ public class TrainRepositoryImpl implements TrainRepository<Train> {
     }
 
     @Override
-    public void createSchedule(Long trainId, Long routeId, Timestamp departureTime, Timestamp arrivalTime) {
+    public void createSchedule(Long trainId, Long routeId, String departureTime, String arrivalTime) {
         try {
             jdbc.update(INSERT_SCHEDULE_QUERY, Map.of("trainId", trainId, "routeId", routeId, "departureTime", departureTime, "arrivalTime", arrivalTime));
         } catch (Exception exception) {
@@ -239,6 +239,26 @@ public class TrainRepositoryImpl implements TrainRepository<Train> {
             log.info(exception.getCause().getMessage());
             log.error(exception.getLocalizedMessage());
             log.error(exception.getStackTrace().toString());
+            throw new ApiException("An error has occurred!");
+        }
+    }
+
+    @Override
+    public Schedule getScheduleById(Long scheduleId) {
+        try {
+            return jdbc.queryForObject(SELECT_SCHEDULE_BY_ID_QUERY, Map.of("scheduleId", scheduleId), new ScheduleRowMapper());
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            log.info(exception.getLocalizedMessage());
+            throw new ApiException("An error has occurred!");
+        }
+    }
+
+    @Override
+    public void updateSchedule(Long scheduleId, Long trainId, Long routeId, String departureTime, String arrivalTime) {
+        try {
+            jdbc.update(UPDATE_SCHEDULE_QUERY, Map.of("scheduleId", scheduleId, "trainId", trainId, "routeId", routeId, "departureTime", departureTime, "arrivalTime", arrivalTime));
+        } catch (Exception exception) {
             throw new ApiException("An error has occurred!");
         }
     }

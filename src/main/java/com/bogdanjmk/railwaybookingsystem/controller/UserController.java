@@ -87,6 +87,24 @@ public class UserController {
         );
     }
 
+    @GetMapping("/schedules")
+    public ResponseEntity<HttpResponse> getSchedules(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("schedules", trainService.getSchedules(), "user", user))
+                        .build()
+        );
+    }
+
+    @GetMapping("/schedules/{scheduleId}")
+    public ResponseEntity<HttpResponse> getScheduleById(@AuthenticationPrincipal User user, @PathVariable("scheduleId") Long scheduleId) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("schedule", trainService.getScheduleById(scheduleId), "user", user))
+                        .build()
+        );
+    }
+
     @PostMapping("/create/train")
     public ResponseEntity<HttpResponse> createTrain(@AuthenticationPrincipal User user, @RequestBody Train train) {
         trainService.createTrain(train);
@@ -135,6 +153,15 @@ public class UserController {
         );
     }
 
+    @PostMapping("/create/schedule")
+    public ResponseEntity<HttpResponse> createSchedule(@AuthenticationPrincipal User user, @RequestBody Schedule schedule) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .message("Schedule created successfully")
+                        .build()
+        );
+    }
+
     @PutMapping("/update/train")
     public ResponseEntity<HttpResponse> updateTrain(@AuthenticationPrincipal User user, @RequestBody Train train, @RequestParam("id") Long trainId) {
         trainService.updateTrain(train, trainId);
@@ -171,6 +198,18 @@ public class UserController {
         );
     }
 
+    @PutMapping("/update/schedule")
+    public ResponseEntity<HttpResponse> updateSchedule(@AuthenticationPrincipal User user, @RequestBody Schedule schedule, @RequestParam("id") Long scheduleId) {
+        trainService.updateScheduleById(scheduleId, schedule);
+
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("user", user))
+                        .message("Schedule updated successfully!")
+                        .build()
+        );
+    }
+
     @DeleteMapping("/delete/train/{trainId}")
     public ResponseEntity<HttpResponse> deleteTrainById(@AuthenticationPrincipal User user, @PathVariable("trainId") Long trainId) {
         trainService.deleteTrainById(trainId);
@@ -203,6 +242,18 @@ public class UserController {
                 HttpResponse.builder()
                         .data(Map.of("user", user))
                         .message("Route deleted successfully")
+                        .build()
+        );
+    }
+
+    @DeleteMapping("/delete/schedule/{scheduleId}")
+    public ResponseEntity<HttpResponse> deleteScheduleById(@AuthenticationPrincipal User user, @PathVariable("scheduleId") Long scheduleId) {
+        trainService.deleteScheduleById(scheduleId);
+
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("user", user))
+                        .message("Schedule deleted successfully")
                         .build()
         );
     }
