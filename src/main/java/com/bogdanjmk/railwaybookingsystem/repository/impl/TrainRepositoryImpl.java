@@ -10,7 +10,6 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.stereotype.Repository;
 
-import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
 
@@ -69,6 +68,17 @@ public class TrainRepositoryImpl implements TrainRepository<Train> {
     public List<Seat> getAllSeatsForATrain(Long trainId) {
         try {
             return jdbc.query(SELECT_SEATS_FOR_A_TRAIN_QUERY, Map.of("trainId", trainId), new SeatRowMapper());
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ApiException("No seats found!");
+        } catch (Exception exception) {
+            throw new ApiException(exception.getMessage());
+        }
+    }
+
+    @Override
+    public List<Seat> getAllSeats() {
+        try {
+            return jdbc.query(SELECT_SEATS_QUERY, new SeatRowMapper());
         } catch (EmptyResultDataAccessException exception) {
             throw new ApiException("No seats found!");
         } catch (Exception exception) {
@@ -146,6 +156,8 @@ public class TrainRepositoryImpl implements TrainRepository<Train> {
         try {
             jdbc.update(INSERT_SCHEDULE_QUERY, Map.of("trainId", trainId, "routeId", routeId, "departureTime", departureTime, "arrivalTime", arrivalTime));
         } catch (Exception exception) {
+            log.info(exception.getLocalizedMessage());
+            log.info(exception.getMessage());
             throw new ApiException("An error has occurred");
         }
     }

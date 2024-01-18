@@ -1,12 +1,17 @@
 package com.bogdanjmk.railwaybookingsystem.controller;
 
+import com.bogdanjmk.railwaybookingsystem.export.csv.*;
+import com.bogdanjmk.railwaybookingsystem.export.pdf.*;
 import com.bogdanjmk.railwaybookingsystem.model.*;
 import com.bogdanjmk.railwaybookingsystem.service.TrainService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -14,6 +19,85 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class UserController {
     private final TrainService trainService;
+
+    @GetMapping("/trains/export/csv")
+    public void exportTrainsToCSV(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Train> trains = trainService.getTrains();
+        TrainExportCSV export = new TrainExportCSV();
+        export.export(trains, response);
+    }
+
+    @GetMapping("/seats/export/csv")
+    public void exportSeatsToCSV(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Seat> seats = trainService.getAllSeats();
+        SeatExportCSV export = new SeatExportCSV();
+        export.export(seats, response);
+    }
+
+    @GetMapping("/stations/export/csv")
+    public void exportStationsToCSV(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Station> stations = trainService.getStations();
+        StationExportCSV export = new StationExportCSV();
+        export.export(stations, response);
+    }
+
+    @GetMapping("/routes/export/csv")
+    public void exportRoutesToCSV(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Route> routes = trainService.getRoutes();
+        RouteExportCSV export = new RouteExportCSV();
+        export.export(routes, response);
+    }
+
+    @GetMapping("/schedules/export/csv")
+    public void exportSchedulesToCSV(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Schedule> schedules = trainService.getSchedules();
+        ScheduleExportCSV export = new ScheduleExportCSV();
+        export.export(schedules, response);
+    }
+
+    @GetMapping("/trains/export/pdf")
+    public void exportTrainsToPdf(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Train> trains = trainService.getTrains();
+        TrainPdfExporter exporter = new TrainPdfExporter();
+        exporter.export(trains, response);
+    }
+
+    @GetMapping("/seats/export/pdf")
+    public void exportSeatsToPdf(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Seat> seats = trainService.getAllSeats();
+        SeatPdfExporter exporter = new SeatPdfExporter();
+        exporter.export(seats, response);
+    }
+
+    @GetMapping("/routes/export/pdf")
+    public void exportRoutesToPdf(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Route> routes = trainService.getRoutes();
+        RoutePdfExporter exporter = new RoutePdfExporter();
+        exporter.export(routes, response);
+    }
+
+    @GetMapping("/stations/export/pdf")
+    public void exportStationsToPdf(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Station> stations = trainService.getStations();
+        StationPdfExporter exporter = new StationPdfExporter();
+        exporter.export(stations, response);
+    }
+
+    @GetMapping("/schedules/export/pdf")
+    public void exportSchedulesToPdf(@AuthenticationPrincipal User user, HttpServletResponse response) throws IOException {
+        List<Schedule> schedules = trainService.getSchedules();
+        SchedulePdfExporter exporter = new SchedulePdfExporter();
+        exporter.export(schedules, response);
+    }
+
+    @GetMapping("/profile")
+    public ResponseEntity<HttpResponse> getUserProfile(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok().body(
+                HttpResponse.builder()
+                        .data(Map.of("user", user))
+                        .build()
+        );
+    }
 
     @GetMapping("/trains")
     public ResponseEntity<HttpResponse> getAllTrains(@AuthenticationPrincipal User user) {
@@ -96,11 +180,12 @@ public class UserController {
         );
     }
 
-    @GetMapping("/schedules/{scheduleId}")
-    public ResponseEntity<HttpResponse> getScheduleById(@AuthenticationPrincipal User user, @PathVariable("scheduleId") Long scheduleId) {
+    @GetMapping("/schedules/{id}")
+    public ResponseEntity<HttpResponse> getScheduleById(@AuthenticationPrincipal User user, @PathVariable("id") Long scheduleId) {
+        System.out.println(scheduleId);
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
-                        .data(Map.of("schedule", trainService.getScheduleById(scheduleId), "user", user))
+                        .data(Map.of("scheduleToGet", trainService.getScheduleById(scheduleId), "user", user))
                         .build()
         );
     }
@@ -155,8 +240,10 @@ public class UserController {
 
     @PostMapping("/create/schedule")
     public ResponseEntity<HttpResponse> createSchedule(@AuthenticationPrincipal User user, @RequestBody Schedule schedule) {
+        trainService.createSchedule(schedule);
         return ResponseEntity.ok().body(
                 HttpResponse.builder()
+                        .data(Map.of("user", user))
                         .message("Schedule created successfully")
                         .build()
         );
@@ -246,8 +333,8 @@ public class UserController {
         );
     }
 
-    @DeleteMapping("/delete/schedule/{scheduleId}")
-    public ResponseEntity<HttpResponse> deleteScheduleById(@AuthenticationPrincipal User user, @PathVariable("scheduleId") Long scheduleId) {
+    @DeleteMapping("/delete/schedule/{id}")
+    public ResponseEntity<HttpResponse> deleteScheduleById(@AuthenticationPrincipal User user, @PathVariable("id") Long scheduleId) {
         trainService.deleteScheduleById(scheduleId);
 
         return ResponseEntity.ok().body(

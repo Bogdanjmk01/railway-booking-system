@@ -6,6 +6,7 @@ public class TrainQuery {
     public static final String UPDATE_TRAIN_QUERY = "UPDATE trains SET train_name = :trainName, train_type = :trainType WHERE id = :id";
     public static final String UPDATE_SEAT_TRAIN_QUERY = "UPDATE seats SET seat_number = :seatNumber, train_id = :trainId, car_number = :carNumber, class = :className WHERE id = :id";
     public static final String SELECT_SEATS_FOR_A_TRAIN_QUERY = "SELECT DISTINCT * FROM seats WHERE train_id = :trainId";
+    public static final String SELECT_SEATS_QUERY = "SELECT DISTINCT * FROM seats";
     public static final String INSERT_STATION_QUERY = "INSERT INTO stations (station_name, location) VALUES (:stationName, :location)";
     public static final String SELECT_TRAINS_QUERY = "SELECT DISTINCT * FROM trains";
     public static final String SELECT_STATIONS_QUERY =  "SELECT DISTINCT * FROM stations";

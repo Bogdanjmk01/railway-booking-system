@@ -130,4 +130,9 @@ public class TrainServiceImpl implements TrainService {
     public void updateScheduleById(Long scheduleId, Schedule schedule) {
         trainRepository.updateSchedule(scheduleId, schedule.getTrainId(), schedule.getRouteId(), schedule.getDepartureTime(), schedule.getArrivalTime());
     }
+
+    @Override
+    public List<Seat> getAllSeats() {
+        return trainRepository.getAllSeats();
+    }
 }

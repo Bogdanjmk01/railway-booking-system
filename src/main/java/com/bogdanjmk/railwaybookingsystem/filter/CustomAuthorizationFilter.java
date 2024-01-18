@@ -37,6 +37,7 @@ public class CustomAuthorizationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        if (response.isCommitted()) return;
         try {
             Map<String, String> requests = getRequestValues(request);
             String token = getToken(request);

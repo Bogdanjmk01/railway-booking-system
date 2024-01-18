@@ -11,6 +11,7 @@ public interface TrainRepository<T extends Train> {
     void updateTrain(Long id, String trainName, String trainType);
     void updateSeatForTrain(Long id, Long trainId,String seatNumber, int carNumber, String className);
     List<Seat> getAllSeatsForATrain(Long trainId);
+    List<Seat> getAllSeats();
     void createStation(String stationName, String location);
     List<Train> getAllTrains();
     List<Station> getAllStations();

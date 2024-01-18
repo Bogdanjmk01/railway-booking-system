@@ -23,6 +23,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @Slf4j
 public class ExceptionsUtils {
     public static void processError(HttpServletRequest request, HttpServletResponse response, Exception exception) {
+        if (response.isCommitted()) return;
         HttpResponse httpResponse;
         if (exception instanceof ApiException || exception instanceof DisabledException || exception instanceof LockedException || exception instanceof BadCredentialsException || exception instanceof InvalidClaimException || exception instanceof TokenExpiredException) {
             httpResponse = getHttpResponse(response, exception.getMessage(), BAD_REQUEST);
@@ -35,6 +36,8 @@ public class ExceptionsUtils {
     }
 
     private static void writeResponse(HttpServletResponse response, HttpResponse httpResponse) {
+        if (response.isCommitted()) return;
+
         OutputStream outputStream;
         try {
             outputStream = response.getOutputStream();
