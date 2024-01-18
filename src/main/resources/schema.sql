@@ -58,6 +58,17 @@ CREATE TABLE customers (
     CONSTRAINT UQ_Customers_Identification_Number UNIQUE (identification_number)
 );
 
+DROP TABLE IF EXISTS customer_roles;
+
+CREATE TABLE customer_roles (
+    id BIGSERIAL PRIMARY KEY NOT NULL CHECK (id > 0),
+    customer_id BIGSERIAL NOT NULL CHECK (customer_id > 0),
+    role_id BIGSERIAL NOT NULL CHECK (role_id > 0),
+    FOREIGN KEY (customer_id) REFERENCES customers (id) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (role_id) REFERENCES roles (id) ON DELETE RESTRICT ON UPDATE CASCADE,
+    CONSTRAINT UQ_CustomerRoles_Customer_Id UNIQUE (customer_id)
+);
+
 DROP TABLE IF EXISTS trains;
 
 CREATE TABLE trains (

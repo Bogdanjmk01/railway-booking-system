@@ -7,6 +7,7 @@ import com.auth0.jwt.exceptions.InvalidClaimException;
 import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.auth0.jwt.exceptions.TokenExpiredException;
 import com.bogdanjmk.railwaybookingsystem.security.RailwayUserDetails;
+import com.bogdanjmk.railwaybookingsystem.security.customers.CustomerDetails;
 import com.bogdanjmk.railwaybookingsystem.service.UserService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -45,6 +46,14 @@ public class TokenProvider {
         return JWT.create().withIssuer(RAILWAY_SYSTEM).withAudience(RAILWAY_MANAGEMENT_SYSTEM)
                 .withIssuedAt(new Date())
                 .withSubject(railwayUserDetails.getUsername()).withArrayClaim(AUTHORITIES, getClaimsFromUser(railwayUserDetails))
+                .withExpiresAt(new Date(currentTimeMillis() + accessTokenExpirationTime))
+                .sign(Algorithm.HMAC512(jwtSecret.getBytes()));
+    }
+
+    public String createAccessToken(CustomerDetails customerDetails) {
+        return JWT.create().withIssuer(RAILWAY_SYSTEM).withAudience(RAILWAY_MANAGEMENT_SYSTEM)
+                .withIssuedAt(new Date())
+                .withSubject(customerDetails.getUsername()).withArrayClaim(AUTHORITIES, getClaimsFromUser(customerDetails))
                 .withExpiresAt(new Date(currentTimeMillis() + accessTokenExpirationTime))
                 .sign(Algorithm.HMAC512(jwtSecret.getBytes()));
     }
@@ -97,6 +106,10 @@ public class TokenProvider {
 
     private String[] getClaimsFromUser(RailwayUserDetails gymUserDetailsService) {
         return gymUserDetailsService.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new);
+    }
+
+    private String[] getClaimsFromUser(CustomerDetails customerDetails) {
+        return customerDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new);
     }
 
     private String[] getClaimsFromToken(String token) {

@@ -13,8 +13,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Collection;
 import java.util.Map;
 
-import static com.bogdanjmk.railwaybookingsystem.query.RoleQuery.SELECT_ROLES_QUERY;
-import static com.bogdanjmk.railwaybookingsystem.query.RoleQuery.SELECT_ROLE_BY_USER_ID_QUERY;
+import static com.bogdanjmk.railwaybookingsystem.query.RoleQuery.*;
 
 @Repository
 @RequiredArgsConstructor
@@ -36,6 +35,21 @@ public class RoleRepositoryImpl implements RoleRepository<Role> {
     public Role getRoleByUserId(Long userId) {
         try {
             return jdbc.queryForObject(SELECT_ROLE_BY_USER_ID_QUERY, Map.of("id", userId), new RoleRowMapper());
+        } catch (EmptyResultDataAccessException exception) {
+            throw new ApiException("No role found by this user");
+        } catch (Exception exception) {
+            log.error(exception.getMessage());
+            log.info(exception.getCause().getMessage());
+            log.error(exception.getLocalizedMessage());
+            log.error(exception.getStackTrace().toString());
+            throw new ApiException("An error has occurred. Please try again later.");
+        }
+    }
+
+    @Override
+    public Role getRoleByCustomerId(Long customerId) {
+        try {
+            return jdbc.queryForObject(SELECT_ROLE_BY_CUSTOMER_ID_QUERY, Map.of("id", customerId), new RoleRowMapper());
         } catch (EmptyResultDataAccessException exception) {
             throw new ApiException("No role found by this user");
         } catch (Exception exception) {

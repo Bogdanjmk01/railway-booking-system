@@ -3,6 +3,7 @@ package com.bogdanjmk.railwaybookingsystem.security;
 import com.bogdanjmk.railwaybookingsystem.filter.CustomAuthorizationFilter;
 import com.bogdanjmk.railwaybookingsystem.handler.CustomAccessDeniedHandler;
 import com.bogdanjmk.railwaybookingsystem.handler.CustomAuthenticationEntryPoint;
+import com.bogdanjmk.railwaybookingsystem.security.customers.CustomerDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,6 +25,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class WebSecurityConfig {
     private final PasswordEncoderConfig encoder;
     private final RailwayDetailsService railwayDetailsService;
+    private final CustomerDetailsService customerDetailsService;
     private final CustomAccessDeniedHandler accessDeniedHandler;
     private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     private final CustomAuthorizationFilter customAuthorizationFilter;
@@ -34,7 +36,7 @@ public class WebSecurityConfig {
         http.csrf(AbstractHttpConfigurer::disable).cors(cors -> cors.configurationSource(corsConfig.corsConfigurationSource()));
         http.sessionManagement(httpSecuritySessionManagementConfigurer -> httpSecuritySessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(httpRequest -> httpRequest.requestMatchers("/api/auth/login/**").permitAll());
-        http.authorizeHttpRequests(httpRequest -> httpRequest.anyRequest().authenticated());
+        http.authorizeHttpRequests(httpRequest -> httpRequest.requestMatchers("/api/user/**").hasRole("ADMIN"));
         http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.exceptionHandling(exception -> exception.accessDeniedHandler(accessDeniedHandler).authenticationEntryPoint(customAuthenticationEntryPoint));
         http.addFilterBefore(customAuthorizationFilter, UsernamePasswordAuthenticationFilter.class);
@@ -44,10 +46,14 @@ public class WebSecurityConfig {
 
     @Bean
     public AuthenticationManager authenticationManager() {
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider();
-        authenticationProvider.setUserDetailsService(railwayDetailsService);
-        authenticationProvider.setPasswordEncoder(encoder.passwordEncoder());
+        DaoAuthenticationProvider userAuthProvider = new DaoAuthenticationProvider();
+        userAuthProvider.setUserDetailsService(railwayDetailsService);
+        userAuthProvider.setPasswordEncoder(encoder.passwordEncoder());
 
-        return new ProviderManager(authenticationProvider);
+        DaoAuthenticationProvider customerAuthProvider = new DaoAuthenticationProvider();
+        customerAuthProvider.setUserDetailsService(customerDetailsService);
+        customerAuthProvider.setPasswordEncoder(encoder.passwordEncoder());
+
+        return new ProviderManager(userAuthProvider, customerAuthProvider);
     }
 }
